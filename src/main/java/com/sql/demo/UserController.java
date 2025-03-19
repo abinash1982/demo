@@ -15,12 +15,10 @@ public class UserController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // Vulnerable to SQL Injection
     @GetMapping("/searchUsers")
-    public ModelAndView searchUsers(@RequestParam String name) {
-        String sql = "SELECT * FROM users WHERE name LIKE '" + name + "%'"; // SQL Injection Vulnerability
+    public ModelAndView searchUsers(@RequestParam UserInput userInput) {
 
-        List<User> users = jdbcTemplate.query(sql, (rs, rowNum) -> {
+        List<User> users = jdbcTemplate.query(userInput.getQuery(), (rs, rowNum) -> {
             User user = new User();
             user.setId(rs.getInt("id"));
             user.setName(rs.getString("name"));
